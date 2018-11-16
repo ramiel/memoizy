@@ -1,25 +1,9 @@
 const isFuture = require('date-fns/is_future');
 const addMilliseconds = require('date-fns/add_milliseconds');
 
-const defaultCacheKeyBuilder = (...args) => {
-  if (args.length === 0) {
-    return '__defaultKey';
-  }
-
-  if (args.length === 1) {
-    const [firstArgument] = args;
-    if (
-      firstArgument === null
-      || firstArgument === undefined
-      || (typeof firstArgument !== 'function' && typeof firstArgument !== 'object')
-    ) {
-      return firstArgument;
-    }
-  }
-
-  return JSON.stringify(args);
-};
-
+const defaultCacheKeyBuilder = (...args) => (args.length === 0
+  ? '__defaultKey'
+  : JSON.stringify(args));
 const isExpired = expireDate => isFuture(expireDate);
 const getExpireDate = maxAge => addMilliseconds(new Date(), maxAge);
 
