@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run lint"
+    "test": "npm run lint && npm run test-only -- --coverage",
+    "test-only": "NODE_ENV=test jest",
+    "test-watch": "npm run test-only -- --watch"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +15,9 @@
   "devDependencies": {
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0"
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jest": "^22.0.0",
+    "jest": "^23.6.0"
   },
   "dependencies": {
     "date-fns": "^1.29.0"
