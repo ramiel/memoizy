@@ -1,6 +1,7 @@
 const isFuture = require('date-fns/is_future');
 const addMilliseconds = require('date-fns/add_milliseconds');
 
+const defaultValueAccept = () => true;
 const defaultCacheKeyBuilder = (...args) => (args.length === 0
   ? '__defaultKey'
   : JSON.stringify(args));
@@ -11,6 +12,7 @@ const remember = (fn, {
   cache = new Map(),
   maxAge = Infinity,
   cacheKey = defaultCacheKeyBuilder,
+  valueAccept = defaultValueAccept,
 } = { cache: new Map(), maxAge: Infinity, cacheKey: defaultCacheKeyBuilder }) => {
   const hasExpireDate = maxAge < Infinity;
 
@@ -24,7 +26,9 @@ const remember = (fn, {
       cache.delete(key);
     }
     const value = fn(...args);
-    cache.set(key, { value, expireDate: hasExpireDate ? getExpireDate(maxAge) : null });
+    if (valueAccept(value)) {
+      cache.set(key, { value, expireDate: hasExpireDate ? getExpireDate(maxAge) : null });
+    }
     return value;
   };
 
