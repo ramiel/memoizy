@@ -25,11 +25,18 @@ const remember = (fn, {
       cache.delete(key);
     }
     const value = fn(...args);
-    if (valueAccept && valueAccept(value)) {
+    if (!valueAccept || valueAccept(value)) {
       cache.set(key, { value, expireDate: hasExpireDate ? getExpireDate(maxAge) : null });
     }
     return value;
   };
+
+  memoized.delete = (...args) => {
+    const key = cacheKey(...args);
+    return cache.delete(key);
+  };
+
+  memoized.clear = cache.clear;
 
   return memoized;
 };
