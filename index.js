@@ -1,4 +1,4 @@
-const isFuture = require('date-fns/is_future');
+const isFuture = require('date-fns/is_past');
 const addMilliseconds = require('date-fns/add_milliseconds');
 
 const defaultCacheKeyBuilder = (...args) => (args.length === 0
