@@ -39,9 +39,10 @@ describe('memoizer', () => {
     test('a function with an object arg, 1-arity, is memoized', () => {
       const fn = jest.fn(a => JSON.stringify(a));
       const mem = memoizer(fn);
-      mem({ name: 'John' });
+      const res = mem({ name: 'John' });
       mem({ name: 'John' });
       expect(fn).toHaveBeenCalledTimes(1);
+      expect(mem({ name: 'John' })).toEqual(res);
       expect(mem({ name: 'Ludwig' })).toBe(JSON.stringify({ name: 'Ludwig' }));
       expect(fn).toHaveBeenCalledTimes(2);
     });
@@ -54,6 +55,14 @@ describe('memoizer', () => {
       expect(fn).toHaveBeenCalledTimes(1);
       expect(mem(3, 4)).toBe(7);
       expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    test('a simple function, n-arity, is memoized', () => {
+      const fn = jest.fn((...args) => args.reduce((sum, n) => sum + n, 0));
+      const mem = memoizer(fn);
+      mem(1, 2, 3, 4);
+      mem(1, 2, 3, 4);
+      expect(fn).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -107,5 +116,75 @@ describe('memoizer', () => {
       expect(fn).toHaveBeenCalledTimes(3);
     });
   });
-  describe('acceptValue function', () => {});
+
+  describe('valueAccept function', () => {
+    test('skip not accepted value', () => {
+      const fn = jest.fn(a => a > 10);
+      const mem = memoizer(fn, { valueAccept: v => v === true });
+      mem(5);
+      mem(5);
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    test('retain accepted value', () => {
+      const fn = jest.fn(a => a > 10);
+      const mem = memoizer(fn, { valueAccept: v => v === true });
+      mem(12);
+      mem(12);
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    test.skip('can skip a rejected promise', () => {});
+  });
+
+  describe('Delete', () => {
+    test('can delete a simple function, 0-arity', () => {
+      const fn = () => Math.random();
+      const mem = memoizer(fn);
+      const res = mem();
+      mem.delete();
+      expect(mem()).not.toBe(res);
+    });
+
+    test('can delete a simple function, 1-arity', () => {
+      const fn = a => a + Math.random();
+      const mem = memoizer(fn);
+      const res = mem(2);
+      mem.delete(2);
+      expect(mem(2)).not.toBe(res);
+    });
+
+    test('can delete a simple function, 1-arity, with an object', () => {
+      const fn = jest.fn(a => ({ ...a, rand: Math.random() }));
+      const mem = memoizer(fn);
+      const res = mem({ hello: 'darkness' });
+      mem.delete({ hello: 'darkness' });
+      expect(mem({ hello: 'darkness' })).not.toEqual(res);
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    test('can delete a simple function, n-arity', () => {
+      const fn = jest.fn((...args) => args.reduce((sum, n) => sum + n, 0));
+      const mem = memoizer(fn);
+      mem(1, 2, 3, 4);
+      mem.delete(1, 2, 3, 4);
+      mem(1, 2, 3, 4);
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('Clear', () => {
+    test('can clear all the memoized values', () => {
+      const fn = jest.fn(a => a + Math.random());
+      const mem = memoizer(fn);
+      mem(1);
+      mem(2);
+      mem(1);
+      mem(2);
+      mem.clear();
+      mem(1);
+      mem(2);
+      expect(fn).toHaveBeenCalledTimes(4);
+    });
+  });
 });

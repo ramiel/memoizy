@@ -36,7 +36,7 @@ const remember = (fn, {
     return cache.delete(key);
   };
 
-  memoized.clear = cache.clear;
+  memoized.clear = cache.clear.bind(cache);
 
   return memoized;
 };
