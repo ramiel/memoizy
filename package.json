@@ -8,7 +8,8 @@
     "lint": "eslint .",
     "test": "npm run lint && npm run test-only -- --coverage",
     "test-only": "NODE_ENV=test jest",
-    "test-watch": "npm run test-only -- --watch"
+    "test-watch": "npm run test-only -- --watch",
+    "test-ci": "npm run test -- --coverageReporters=text-lcov | coveralls"
   },
   "keywords": [
     "memoize",
@@ -21,6 +22,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "coveralls": "^3.0.2",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
@@ -31,6 +33,7 @@
   "jest": {
     "testEnvironment": "node",
     "coverageReporters": [
+      "lcov",
       "text-summary",
       "html"
     ],

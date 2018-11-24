@@ -1,6 +1,7 @@
 # Memoizy
 
 [![CircleCI](https://circleci.com/gh/ramiel/memoizy.svg?style=svg)](https://circleci.com/gh/ramiel/memoizy)
+[![Coverage Status](https://coveralls.io/repos/github/ramiel/memoizy/badge.svg?branch=master)](https://coveralls.io/github/ramiel/memoizy?branch=master)
 
 This is a memoization helper that let you memoize and also have the following features
 
