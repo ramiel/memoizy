@@ -36,6 +36,16 @@ describe('memoizer', () => {
       expect(fn).toHaveBeenCalledTimes(2);
     });
 
+    test('a function with a promise arg, 1-arity, is memoized', async () => {
+      const fn = jest.fn(async a => `hello ${a}`);
+      const mem = memoizer(fn);
+      await mem('John');
+      await mem('John');
+      expect(fn).toHaveBeenCalledTimes(1);
+      expect(await mem('Carl')).toBe('hello Carl');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
     test('a function with an object arg, 1-arity, is memoized', () => {
       const fn = jest.fn(a => JSON.stringify(a));
       const mem = memoizer(fn);
