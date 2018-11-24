@@ -6,6 +6,7 @@ const defaultCacheKeyBuilder = (...args) => (args.length === 0
   : JSON.stringify(args));
 const isExpired = expireDate => isFuture(expireDate);
 const getExpireDate = maxAge => addMilliseconds(new Date(), maxAge);
+const isPromise = value => value instanceof Promise;
 
 const remember = (fn, {
   cache = new Map(),
@@ -25,7 +26,21 @@ const remember = (fn, {
       cache.delete(key);
     }
     const value = fn(...args);
-    if (!valueAccept || valueAccept(value)) {
+
+    if (isPromise(value)) {
+      cache.set(key, { value, expireDate: hasExpireDate ? getExpireDate(maxAge) : null });
+      if (valueAccept) {
+        value.then((res) => {
+          if (!valueAccept(null, res)) {
+            cache.delete(key);
+          }
+        }).catch((err) => {
+          if (!valueAccept(err)) {
+            cache.delete(key);
+          }
+        });
+      }
+    } else if (!valueAccept || valueAccept(null, value)) {
       cache.set(key, { value, expireDate: hasExpireDate ? getExpireDate(maxAge) : null });
     }
     return value;

@@ -120,7 +120,7 @@ describe('memoizer', () => {
   describe('valueAccept function', () => {
     test('skip not accepted value', () => {
       const fn = jest.fn(a => a > 10);
-      const mem = memoizer(fn, { valueAccept: v => v === true });
+      const mem = memoizer(fn, { valueAccept: (_, v) => v === true });
       mem(5);
       mem(5);
       expect(fn).toHaveBeenCalledTimes(2);
@@ -128,13 +128,43 @@ describe('memoizer', () => {
 
     test('retain accepted value', () => {
       const fn = jest.fn(a => a > 10);
-      const mem = memoizer(fn, { valueAccept: v => v === true });
+      const mem = memoizer(fn, { valueAccept: (_, v) => v === true });
       mem(12);
       mem(12);
       expect(fn).toHaveBeenCalledTimes(1);
     });
 
-    test.skip('can skip a rejected promise', () => {});
+    test('can skip a rejected promise', async () => {
+      const fn = jest.fn(async () => { throw new Error(); });
+      const mem = memoizer(fn, { valueAccept: err => !err });
+      await mem().catch(() => {});
+      await mem().catch(() => {});
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    test('can keep a rejected promise', async () => {
+      const fn = jest.fn(async () => { throw new Error(); });
+      const mem = memoizer(fn, { valueAccept: () => true });
+      await mem().catch(() => {});
+      await mem().catch(() => {});
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    test('can retain a fullfilled promise', async () => {
+      const fn = jest.fn(async a => a * 2);
+      const mem = memoizer(fn, { valueAccept: err => !err });
+      await mem(11).catch(() => {});
+      await mem(11).catch(() => {});
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    test('can skip a fullfilled promise', async () => {
+      const fn = jest.fn(async a => a * 2);
+      const mem = memoizer(fn, { valueAccept: () => false });
+      await mem(11).catch(() => {});
+      await mem(11).catch(() => {});
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe('Delete', () => {
