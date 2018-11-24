@@ -7,13 +7,13 @@ const defaultCacheKeyBuilder = (...args) => (args.length === 0
 const isExpired = expireDate => isPast(expireDate);
 const getExpireDate = maxAge => addMilliseconds(new Date(), maxAge);
 const isPromise = value => value instanceof Promise;
+const defaulOptions = {
+  cache: new Map(), maxAge: Infinity, cacheKey: defaultCacheKeyBuilder, valueAccept: null,
+};
 
 const remember = (fn, {
-  cache = new Map(),
-  maxAge = Infinity,
-  cacheKey = defaultCacheKeyBuilder,
-  valueAccept = null,
-} = { cache: new Map(), maxAge: Infinity, cacheKey: defaultCacheKeyBuilder }) => {
+  cache = new Map(), maxAge = Infinity, cacheKey = defaultCacheKeyBuilder, valueAccept = null,
+} = defaulOptions) => {
   const hasExpireDate = maxAge < Infinity;
   const set = (key, value) => cache.set(
     key, { value, expireDate: hasExpireDate && getExpireDate(maxAge) },
