@@ -16,4 +16,23 @@ This is a memoization helper that let you memoize and also have the following fe
 - small size
 - small footprint
 
+## Usage
+
+### Basic
+
+Memoize the return value of a function
+
+```js
+const memoize = require('<this package>');
+
+const fact = (n) => {
+  if(n === 1) return n;
+  return n * fact(n - 1);
+}
+
+const memoizedFact = memoize(fact);
+memoizedFact(3); // 6
+memoizedFact(3); // the return value is always 6 but the factorial is not computed anymore
+```
+
 
