@@ -34,7 +34,7 @@ const fact = (n) => {
 
 const memoizedFact = memoize(fact);
 memoizedFact(3); // 6
-memoizedFact(3); // the return value is always 6 but 
+memoizedFact(3); // the return value is always 6 but
                  // the factorial is not computed anymore
 ```
 
