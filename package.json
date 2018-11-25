@@ -29,6 +29,8 @@
       "text-summary",
       "html"
     ],
-    "setupFiles": ["jest-date-mock"]
+    "setupFiles": [
+      "jest-date-mock"
+    ]
   }
 }
