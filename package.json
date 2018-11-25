@@ -18,20 +18,14 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jest": "^22.0.0",
-    "jest": "^23.6.0",
-    "jest-date-mock": "^1.0.6"
+    "jest": "^23.6.0"
   },
-  "dependencies": {
-    "date-fns": "^1.29.0"
-  },
+  "dependencies": {},
   "jest": {
     "testEnvironment": "node",
     "coverageReporters": [
       "text-summary",
       "html"
-    ],
-    "setupFiles": [
-      "jest-date-mock"
     ]
   }
 }

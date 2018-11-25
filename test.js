@@ -1,13 +1,8 @@
-const { advanceBy, advanceTo, clear } = require('jest-date-mock');
 const memoizer = require('./index');
 
 jest.useFakeTimers();
 
 describe('memoizer', () => {
-  afterAll(() => {
-    clear();
-  });
-
   describe('basic', () => {
     test('a simple function, 0-arity, is memoized', () => {
       const fn = () => Math.random();
@@ -88,14 +83,14 @@ describe('memoizer', () => {
 
   describe('max age', () => {
     beforeEach(() => {
-      advanceTo(Date.current());
+      jest.clearAllTimers();
     });
 
     test('by default no value is discarded', () => {
       const fn = () => Math.random();
       const mem = memoizer(fn);
       const res = mem();
-      advanceBy(1000 * 1000);
+      jest.advanceTimersByTime(1000 * 1000);
       expect(mem()).toBe(res);
     });
 
@@ -103,25 +98,27 @@ describe('memoizer', () => {
       const fn = () => Math.random();
       const mem = memoizer(fn, { maxAge: 1000 });
       const res = mem();
-      advanceBy(990);
+      jest.advanceTimersByTime(990);
       expect(mem()).toBe(res);
     });
 
-    test('when max-age is set, the value is discarded after the time', () => {
-      const fn = () => Math.random();
-      const mem = memoizer(fn, { maxAge: 1000 });
-      const res = mem();
-      advanceBy(1001);
-      expect(mem()).not.toBe(res);
-    });
-
-    test('when max-age is set, the value is NOT discarded before the time', () => {
+    test('when max-age is set, the value is NOT discarded before the time (shifted first set)', () => {
       const fn = () => Math.random();
       const mem = memoizer(fn, { maxAge: 1000 });
       jest.advanceTimersByTime(200);
       const res = mem();
       jest.advanceTimersByTime(900);
       expect(mem()).toBe(res);
+      jest.advanceTimersByTime(101);
+      expect(mem()).not.toBe(res);
+    });
+
+    test('when max-age is set, the value is discarded after the time', () => {
+      const fn = () => Math.random();
+      const mem = memoizer(fn, { maxAge: 1000 });
+      const res = mem();
+      jest.advanceTimersByTime(1001);
+      expect(mem()).not.toBe(res);
     });
   });
 
