@@ -29,22 +29,21 @@ const remember = (fn, {
     }
     const value = fn(...args);
 
-    if (valueAccept) {
-      if (isPromise(value)) {
-        value
-          .then(res => [null, res])
-          .catch(err => [err])
-          .then(([err, res]) => {
-            if (valueAccept(err, res)) {
-              set(key, value);
-            }
-          });
-      } else if (valueAccept(null, value)) {
-        set(key, value);
-      }
-    } else {
+    if (!valueAccept) {
+      set(key, value);
+    } else if (isPromise(value)) {
+      value
+        .then(res => [null, res])
+        .catch(err => [err])
+        .then(([err, res]) => {
+          if (valueAccept(err, res)) {
+            set(key, value);
+          }
+        });
+    } else if (valueAccept(null, value)) {
       set(key, value);
     }
+
     return value;
   };
 

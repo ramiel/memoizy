@@ -46,6 +46,16 @@ describe('memoizer', () => {
       expect(fn).toHaveBeenCalledTimes(2);
     });
 
+    test('a function with an undefined arg, 1-arity, is memoized', () => {
+      const fn = jest.fn(a => `hello ${a}`);
+      const mem = memoizer(fn);
+      mem();
+      mem();
+      expect(fn).toHaveBeenCalledTimes(1);
+      expect(mem('Carl')).toBe('hello Carl');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
     test('a function with an object arg, 1-arity, is memoized', () => {
       const fn = jest.fn(a => JSON.stringify(a));
       const mem = memoizer(fn);
@@ -103,6 +113,15 @@ describe('memoizer', () => {
       const res = mem();
       advanceBy(1001);
       expect(mem()).not.toBe(res);
+    });
+
+    test('when max-age is set, the value is NOT discarded before the time', () => {
+      const fn = () => Math.random();
+      const mem = memoizer(fn, { maxAge: 1000 });
+      jest.advanceTimersByTime(200);
+      const res = mem();
+      jest.advanceTimersByTime(900);
+      expect(mem()).toBe(res);
     });
   });
 
