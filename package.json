@@ -1,7 +1,8 @@
 {
   "name": "M",
   "version": "0.1.0",
-  "description": "",
+  "description": "Powerful memoization helper",
+  "repository": "github:ramiel/M",
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",

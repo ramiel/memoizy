@@ -1,11 +1,8 @@
-# Remember
+# M
 
-[![CircleCI](https://circleci.com/gh/ramiel/remember.svg?style=svg)](https://circleci.com/gh/ramiel/remember)
+[![CircleCI](https://circleci.com/gh/ramiel/M.svg?style=svg)](https://circleci.com/gh/ramiel/M)
 
 Memoization helper
-
-**NOTE**: this README is not complete until this library 
-gets a decent name to be published on npm.
 
 This is a memoization helper that let you memoize and also have the following feature
 
@@ -25,7 +22,7 @@ This is a memoization helper that let you memoize and also have the following fe
 Memoize the return value of a function
 
 ```js
-const memoize = require('<this package>');
+const memoize = require('M');
 
 const fact = (n) => {
   if(n === 1) return n;
