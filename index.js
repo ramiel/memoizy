@@ -50,7 +50,13 @@ const remember = (fn, {
   };
 
   memoized.delete = (...args) => cache.delete(cacheKey(...args));
-  memoized.clear = cache.clear.bind(cache);
+  memoized.clear = () => {
+    if (cache.clear instanceof Function) {
+      cache.clear();
+    } else {
+      throw new Error('This cache doesn\'t support clear');
+    }
+  };
 
   return memoized;
 };

@@ -118,7 +118,8 @@ memSum.clear(); // All values are now cleared and the cache for this memoized fu
 ### Different cache
 
 You can use another cache implementation if you desire. The only contraints is that it must implement
-the methods `has`, `get`, `set`, `delete` and `clear`.    
+the methods `has`, `get`, `set`, `delete` and, optionally, `clear`.    
+If the cache doesn't support clear, it's up to you not to call it. In case an error is thrown.
 
 **NOTE**: If you plan to use a WeakMap, remember that clear is not available in all the implementations.    
 Look [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap#Implementing_a_WeakMap-like_class_with_a_.clear()_method=) for a way to use a weak map as cache.
@@ -160,7 +161,7 @@ const memFn = memoizy(fn, {cache: () => new AlternativeCache()});
 This library offers a variant which is handy if you develop in functional programming style.
 
 It has the same feature and the following differences:
-- the order of the params is inverted `memoizy(options, fn)`
+- the order of the parameters is inverted `memoizy(options, fn)`
 - the `memoizy` function is curried
 
 An example
