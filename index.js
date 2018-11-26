@@ -2,13 +2,19 @@ const defaultCacheKeyBuilder = (...args) => (args.length === 0
   ? '__0aritykey__'
   : JSON.stringify(args));
 const isPromise = value => value instanceof Promise;
+const defaultOptions = {
+  cache: () => new Map(), maxAge: Infinity, cacheKey: defaultCacheKeyBuilder, valueAccept: null,
+};
 
 const remember = (fn, {
-  cache = new Map(), maxAge = Infinity, cacheKey = defaultCacheKeyBuilder, valueAccept = null,
-} = {
-  cache: new Map(), maxAge: Infinity, cacheKey: defaultCacheKeyBuilder, valueAccept: null,
-}) => {
+  cache: cacheFactory = () => new Map(),
+  maxAge = Infinity,
+  cacheKey = defaultCacheKeyBuilder,
+  valueAccept = null,
+} = defaultOptions) => {
   const hasExpireDate = maxAge < Infinity;
+  const cache = cacheFactory();
+
   const set = (key, value) => {
     if (hasExpireDate) {
       setTimeout(() => { cache.delete(key); }, maxAge);
