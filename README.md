@@ -12,6 +12,7 @@ This is a memoization helper that let you memoize and also have the following fe
 - 🧪 Fully tested
 - 👶 Small size, just ~50 lines of code
 - 👣 Small footprint and no dependencies
+- **( )** FP style available
 
 ## Usage
 
@@ -154,9 +155,9 @@ const fn = a => a * 2;
 const memFn = memoizy(fn, {cache: () => new AlternativeCache()});
 ```
 
-## Functional Programming alternative
+## FP style alternative
 
-This library offers a variant which is handy if you develop in fp style.
+This library offers a variant which is handy if you develop in functional programming style.
 
 It has the same feature and the following differences:
 - the order of the params is inverted `memoizy(options, fn)`
