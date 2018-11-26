@@ -1,6 +1,6 @@
 {
   "name": "memoizy",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Powerful memoization helper",
   "repository": "github:ramiel/M",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "test-only": "NODE_ENV=test jest",
     "test-watch": "npm run test-only -- --watch"
   },
-  "keywords": [],
+  "keywords": ["memoize", "cache"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
