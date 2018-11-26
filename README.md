@@ -153,3 +153,27 @@ class AlternativeCache {
 const fn = a => a * 2;
 const memFn = memoizy(fn, {cache: () => new AlternativeCache()});
 ```
+
+## Functional Programming alternative
+
+This library offers a variant which is handy if you develop in fp style.
+
+It has the same feature and the following differences:
+- the order of the params is inverted `memoizy(options, fn)`
+- the `memoizy` function is curried
+
+An example
+
+```js
+const memoizy = require('memoizy/fp');
+
+// since it is curried, we can pass just options and a new function will be returned
+const memoizeFor5Seconds = memoizy({maxage: 5 * 1000});
+
+const double = a => a * 2;
+const triple = a => a * 2;
+
+// Now we can memoize both function with the same options
+const memoizedDouble = memoizeFor5Seconds(double);
+const memoizedTriple = memoizeFor5Seconds(triple);
+```
