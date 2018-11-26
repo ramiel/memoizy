@@ -4,14 +4,14 @@
 
 This is a memoization helper that let you memoize and also have the following features
 
-- max age: discard memoized value after a configurable amount of time
-- custom cache key: decide how to build your cache key
-- clear and delete: delete all the memoized values 
-                    or just one for a specific argument set
-- conditional memoization: memoize the result only if you like it :)
-- fully tested
-- small size (~50 LOC)
-- small footprint (no dependencies)
+- ⏰ Max age: discard memoized value after a configurable amount of time 
+- 🗝 Custom cache key: decide how to build your cache key
+- 🧹 Clear and delete: delete all the memoized values 
+                    or just one for a specific argument set 
+- ❓ Conditional memoization: memoize the result only if you like it 🙂
+- 🧪 Fully tested
+- 👶 Small size, just ~50 lines of code
+- 👣 Small footprint and no dependencies
 
 ## Usage
 
