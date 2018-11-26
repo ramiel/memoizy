@@ -20,14 +20,14 @@ This is a memoization helper that let you memoize and also have the following fe
 Memoize the return value of a function
 
 ```js
-const memoize = require('memoizy');
+const memoizy = require('memoizy');
 
 const fact = (n) => {
   if(n === 1) return n;
   return n * fact(n - 1);
 }
 
-const memoizedFact = memoize(fact);
+const memoizedFact = memoizy(fact);
 memoizedFact(3); // 6
 memoizedFact(3); // the return value is always 6 but
                  // the factorial is not computed anymore
@@ -37,12 +37,17 @@ memoizedFact(3); // the return value is always 6 but
 
 The memoize function accept the following options
 
-`memoize(fn, options)`
+`memoizy(fn, options)`
 
 - `maxAge`: Tell how much time the value must be kept in memory, in milliseconds. Default: Infinity
 - `cache`: Specify a different cache to be used. It must have the same interface as [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). Default [new Map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
 - `cacheKey`: Function to build the cache key given the arguments.
 - `valueAccept`: Function in the form `(err, value) => true/false`. It receive an error (if any) and the memoized value and return true/false. If false is returned, the value is discarded. If the memoized function returns a promise, the resolved value (or the rejection error) is passed to the function. Default null (all values accepted)
+
+`memoizy` return the memoized function with two other properties: `delete` and `clear`
+
+- `delete`: is a function that takes the same arguments as the original function and delete the entry for those arguments
+- `clear`: is a function that deletes all the cached entries
 
 ## Recipes
 
@@ -89,4 +94,22 @@ const memoized = memoize(originalFn, {valueAccept: (err, value) => value === tru
 
 await memoized(1); // ignores the result since it's false
 await memoized(15); // returns true and it's memoized
+```
+
+### Delete and Clear
+
+```js
+const memoize = require('memoizy');
+
+const sum = (a, b) => a + b;
+
+const memSum = memoize(sum);
+
+memSum(5, 4); // returns 9;
+memSum(1, 3); // returns 4;
+memSum.delete(5,4); // remove the entry for the memoized result 9
+memSum(1, 3); // returns 4 without comupting the sum
+memSum(5, 4); // returns 9 re-computing the sum and memoize it again
+
+memSum.clear(); // All values are now cleared and the cache for this memoized function is empty
 ```
