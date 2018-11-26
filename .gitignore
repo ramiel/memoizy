@@ -81,4 +81,4 @@ typings/
 .fusebox/
 
 # End of https://www.gitignore.io/api/node
-.stress.test.js
+.stress.js

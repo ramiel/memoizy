@@ -40,7 +40,7 @@ The memoize function accept the following options
 `memoizy(fn, options)`
 
 - `maxAge`: Tell how much time the value must be kept in memory, in milliseconds. Default: Infinity
-- `cache`: Specify a different cache to be used. It must have the same interface as [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). Default [new Map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
+- `cache`: Specify a different cache to be used. It's a function that returns a new cache that must have the same interface as [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). Default [new Map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
 - `cacheKey`: Function to build the cache key given the arguments.
 - `valueAccept`: Function in the form `(err, value) => true/false`. It receive an error (if any) and the memoized value and return true/false. If false is returned, the value is discarded. If the memoized function returns a promise, the resolved value (or the rejection error) is passed to the function. Default null (all values accepted)
 
@@ -112,4 +112,44 @@ memSum(1, 3); // returns 4 without comupting the sum
 memSum(5, 4); // returns 9 re-computing the sum and memoize it again
 
 memSum.clear(); // All values are now cleared and the cache for this memoized function is empty
+```
+
+### Different cache
+
+You can use another cache implementation if you desire. The only contraints is that it must implement
+the methods `has`, `get`, `set`, `delete` and `clear`.    
+
+**NOTE**: If you plan to use a WeakMap, remember that clear is not available in all the implementations
+Look [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap#Implementing_a_WeakMap-like_class_with_a_.clear()_method=) for a way to use a weak map as cache.
+
+```js
+const memoizy = require('memoizy');
+
+class AlternativeCache {
+  constructor() {
+    this.data = {};
+  }
+
+  has(key) {
+    return key in this.data;
+  }
+
+  get(key) {
+    return this.data[key];
+  }
+
+  set(key, value) {
+    this.data[key] = value;
+  }
+
+  delete(key) {
+    delete this.data[key];
+  }
+
+  clear() {
+    this.data = {};
+  }
+}
+const fn = a => a * 2;
+const memFn = memoizy(fn, {cache: () => new AlternativeCache()});
 ```

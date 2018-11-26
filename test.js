@@ -243,4 +243,44 @@ describe('memoizer', () => {
       expect(fn).toHaveBeenCalledTimes(4);
     });
   });
+
+  describe('Custom cache', () => {
+    class AlternativeCache {
+      constructor() {
+        this.data = {};
+      }
+
+      has(key) {
+        return key in this.data;
+      }
+
+      get(key) {
+        return this.data[key];
+      }
+
+      set(key, value) {
+        this.data[key] = value;
+      }
+
+      delete(key) {
+        delete this.data[key];
+      }
+
+      clear() {
+        this.data = {};
+      }
+    }
+
+    test('can use another cache', () => {
+      const aletrnativeCache = new AlternativeCache();
+      const spyGet = jest.spyOn(aletrnativeCache, 'get');
+      const fn = jest.fn(a => a * 2);
+      const memFn = memoizer(fn, { cache: () => aletrnativeCache });
+      memFn(3);
+      const res = memFn(3);
+      expect(res).toBe(6);
+      expect(fn).toHaveBeenCalledTimes(1);
+      expect(spyGet).toHaveBeenCalledTimes(1);
+    });
+  });
 });
