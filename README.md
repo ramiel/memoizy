@@ -119,7 +119,7 @@ memSum.clear(); // All values are now cleared and the cache for this memoized fu
 You can use another cache implementation if you desire. The only contraints is that it must implement
 the methods `has`, `get`, `set`, `delete` and `clear`.    
 
-**NOTE**: If you plan to use a WeakMap, remember that clear is not available in all the implementations
+**NOTE**: If you plan to use a WeakMap, remember that clear is not available in all the implementations.    
 Look [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap#Implementing_a_WeakMap-like_class_with_a_.clear()_method=) for a way to use a weak map as cache.
 
 ```js
