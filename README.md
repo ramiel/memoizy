@@ -1,6 +1,6 @@
-# M
+# Memoizy
 
-[![CircleCI](https://circleci.com/gh/ramiel/M.svg?style=svg)](https://circleci.com/gh/ramiel/M)
+[![CircleCI](https://circleci.com/gh/ramiel/memoizy.svg?style=svg)](https://circleci.com/gh/ramiel/memoizy)
 
 Memoization helper
 
@@ -22,7 +22,7 @@ This is a memoization helper that let you memoize and also have the following fe
 Memoize the return value of a function
 
 ```js
-const memoize = require('M');
+const memoize = require('memoizy');
 
 const fact = (n) => {
   if(n === 1) return n;
