@@ -2,18 +2,16 @@
 
 [![CircleCI](https://circleci.com/gh/ramiel/memoizy.svg?style=svg)](https://circleci.com/gh/ramiel/memoizy)
 
-Memoization helper
+This is a memoization helper that let you memoize and also have the following features
 
-This is a memoization helper that let you memoize and also have the following feature
-
-- max age: forbid memoized value after an amount of time
+- max age: discard memoized value after a configurable amount of time
 - custom cache key: decide how to build your cache key
 - clear and delete: delete all the memoized values 
                     or just one for a specific argument set
 - conditional memoization: memoize the result only if you like it :)
 - fully tested
-- small size
-- small footprint
+- small size (~50 LOC)
+- small footprint (no dependencies)
 
 ## Usage
 
@@ -42,7 +40,7 @@ The memoize function accept the following options
 `memoize(fn, options)`
 
 - `maxAge`: Tell how much time the value must be kept in memory, in milliseconds. Default: Infinity
-- `cache`: Specify a different cache to be used. It must ahve the same interface as [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). Default [new Map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
+- `cache`: Specify a different cache to be used. It must have the same interface as [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). Default [new Map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
 - `cacheKey`: Function to build the cache key given the arguments.
 - `valueAccept`: Function in the form `(err, value) => true/false`. It receive an error (if any) and the memoized value and return true/false. If false is returned, the value is discarded. If the memoized function returns a promise, the resolved value (or the rejection error) is passed to the function. Default null (all values accepted)
 
@@ -89,6 +87,6 @@ const originalFn = (a) => {
 // Tell to ignore the false value returned
 const memoized = memoize(originalFn, {valueAccept: (err, value) => value === true});
 
-await memoized(1); // memoize the result since it's true
+await memoized(1); // discard the result since it's false
 await memoized(15); // returns true and it's memoized
 ```
