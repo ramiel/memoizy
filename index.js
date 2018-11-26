@@ -6,7 +6,7 @@ const defaultOptions = {
   cache: () => new Map(), maxAge: Infinity, cacheKey: defaultCacheKeyBuilder, valueAccept: null,
 };
 
-const remember = (fn, {
+const memoizy = (fn, {
   cache: cacheFactory = () => new Map(),
   maxAge = Infinity,
   cacheKey = defaultCacheKeyBuilder,
@@ -61,4 +61,4 @@ const remember = (fn, {
   return memoized;
 };
 
-module.exports = remember;
+module.exports = memoizy;
