@@ -156,6 +156,21 @@ const fn = a => a * 2;
 const memFn = memoizy(fn, {cache: () => new AlternativeCache()});
 ```
 
+## Use WeakMap as cache
+
+Let's see how to use a WeakMap, without implement the optional clear.
+
+```js
+const fn = jest.fn(obj => ({ ...obj, date: new Date() }));
+const memFn = memoizer(fn, {
+  // Specify a cache factory that returns a new WeakMap
+  cache: () => new WeakMap(), 
+  // A WeakMap only accept non-primitive values as key. Let's change the way the key is created
+  // In this case just return the first parameter. Note that this work for this function only
+  cacheKey: obj => obj
+});
+```
+
 ## FP style alternative
 
 This library offers a variant which is handy if you develop in functional programming style.
