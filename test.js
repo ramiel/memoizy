@@ -282,5 +282,20 @@ describe('memoizer', () => {
       expect(fn).toHaveBeenCalledTimes(1);
       expect(spyGet).toHaveBeenCalledTimes(1);
     });
+
+    test('can use a cache wihtout clear', () => {
+      const fn = jest.fn(obj => ({ ...obj, date: new Date() }));
+      const memFn = memoizer(fn, { cache: () => new WeakMap(), cacheKey: o => o });
+      const obj = { hello: 'world' };
+      const res1 = memFn(obj);
+      const res2 = memFn(obj);
+      expect(res1).toEqual(expect.objectContaining({
+        hello: 'world',
+        date: expect.any(Date),
+      }));
+      expect(res1).toBe(res2);
+      expect(fn).toHaveBeenCalledTimes(1);
+      expect(() => memFn.clear()).toThrow();
+    });
   });
 });
