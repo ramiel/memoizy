@@ -8,7 +8,7 @@ This is a memoization helper that let you memoize and also have the following fe
 - 🗝 Custom cache key: decide how to build your cache key
 - 🧹 Clear and delete: delete all the memoized values 
                     or just one for a specific argument set 
-- ❓ Conditional memoization: memoize the result only if you like it 🙂
+- ❓ Conditional memoization: memoize the result only if you like it. It works with async code too
 - 🧪 Fully tested
 - 👶 Small size, just ~50 lines of code
 - 👣 Small footprint and no dependencies
