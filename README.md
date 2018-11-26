@@ -87,6 +87,6 @@ const originalFn = (a) => {
 // Tell to ignore the false value returned
 const memoized = memoize(originalFn, {valueAccept: (err, value) => value === true});
 
-await memoized(1); // discard the result since it's false
+await memoized(1); // ignores the result since it's false
 await memoized(15); // returns true and it's memoized
 ```
