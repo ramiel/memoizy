@@ -1,4 +1,4 @@
-const memoizer = require('./index');
+const memoizer = require('../index');
 
 jest.useFakeTimers();
 

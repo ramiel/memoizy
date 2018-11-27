@@ -33,6 +33,12 @@
     "coverageReporters": [
       "text-summary",
       "html"
+    ],
+    "collectCoverageFrom": [
+      "**/*.{js,jsx}",
+      "!**/node_modules/**",
+      "!**/coverage/**",
+      "!.*.js"
     ]
   }
 }
