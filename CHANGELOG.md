@@ -1,5 +1,8 @@
 # Memoizy
 
+## 1.0.2
+  - Ignore `maxAge` if it's 0 or less than 0
+
 ## 1.0.1
   - Fix on the documentation
 
