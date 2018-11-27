@@ -51,6 +51,21 @@ describe('memoizer', () => {
       expect(fn).toHaveBeenCalledTimes(2);
     });
 
+    test('two functions with an undefined arg, 1-arity, are memoized indipendently', () => {
+      const fn = jest.fn(a => `hello ${a}`);
+      const fn2 = jest.fn(a => `ciao ${a}`);
+      const mem = memoizer(fn);
+      const mem2 = memoizer(fn2);
+      mem();
+      mem();
+      mem2();
+      mem2();
+      expect(mem()).toBe('hello undefined');
+      expect(mem2()).toBe('ciao undefined');
+      expect(fn).toHaveBeenCalledTimes(1);
+      expect(fn2).toHaveBeenCalledTimes(1);
+    });
+
     test('a function with an object arg, 1-arity, is memoized', () => {
       const fn = jest.fn(a => JSON.stringify(a));
       const mem = memoizer(fn);
