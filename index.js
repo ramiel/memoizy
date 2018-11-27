@@ -12,7 +12,7 @@ const memoizy = (fn, {
   cacheKey = defaultCacheKeyBuilder,
   valueAccept = null,
 } = defaultOptions) => {
-  const hasExpireDate = maxAge < Infinity;
+  const hasExpireDate = maxAge > 0 && maxAge < Infinity;
   const cache = cacheFactory();
 
   const set = (key, value) => {

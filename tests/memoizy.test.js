@@ -120,6 +120,22 @@ describe('memoizer', () => {
       jest.advanceTimersByTime(1001);
       expect(mem()).not.toBe(res);
     });
+
+    test('when max-age is 0, the value is memoized forever', () => {
+      const fn = () => Math.random();
+      const mem = memoizer(fn, { maxAge: 0 });
+      const res = mem();
+      jest.advanceTimersByTime(10000);
+      expect(mem()).toBe(res);
+    });
+
+    test('when max-age is less than 0, the value is memoized forever', () => {
+      const fn = () => Math.random();
+      const mem = memoizer(fn, { maxAge: -10 });
+      const res = mem();
+      jest.advanceTimersByTime(10000);
+      expect(mem()).toBe(res);
+    });
   });
 
   describe('cacheKey custom function', () => {
