@@ -1,5 +1,8 @@
 # Memoizy
 
+## 1.0.1
+  - Fix on the documentation
+
 ## 1.0.0
   - First main release ✨
   - Fix API
