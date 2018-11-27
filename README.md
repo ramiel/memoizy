@@ -6,14 +6,14 @@
 This is a memoization helper that let you memoize and also have the following features
 
 - ⏰ Max age: discard memoized value after a configurable amount of time 
-- 🗝 Custom cache key: decide how to build your cache key
-- 🧹 Clear and delete: delete all the memoized values 
-                    or just one for a specific argument set 
+- ♻️ Custom cache: drop-in your favorite cache or your own implementation
+- 🗝 Custom cache key: decide how to build the cache keys
+- 🧹 Clear and delete: delete all the memoized values or just one for a specific arguments set 
 - ❓ Conditional memoization: memoize the result only if you like it. It works with async code too
 - 🧪 Fully tested
-- 👶 Small size, just ~50 lines of code
-- 👣 Small footprint and no dependencies
-- **( )** FP style available
+- 👶 Small size and no dependencies
+- 👣 Small footprint
+- &nbsp;**λ**&nbsp;&nbsp; FP style available
 
 ## Usage
 
@@ -176,7 +176,7 @@ const memFn = memoizer(fn, {
 
 This library offers a variant which is handy if you develop in functional programming style.
 
-It has the same feature and the following differences:
+It has the same features and the following differences:
 - the order of the parameters is inverted `memoizy(options, fn)`
 - the `memoizy` function is curried
 
