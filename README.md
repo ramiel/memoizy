@@ -41,7 +41,7 @@ The memoize function accept the following options
 `memoizy(fn, options)`
 
 - `maxAge`: Tell how much time the value must be kept in memory, in milliseconds. Default: Infinity
-- `cache`: Specify a different cache to be used. It's a function that returns a new cache that must have the same interface as [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). Default [new Map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
+- `cache`: Specify a different cache to be used. It's a function that returns a new cache that must have the same interface as [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). Default [() => new Map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
 - `cacheKey`: Function to build the cache key given the arguments.
 - `valueAccept`: Function in the form `(err, value) => true/false`. It receive an error (if any) and the memoized value and return true/false. If false is returned, the value is discarded. If the memoized function returns a promise, the resolved value (or the rejection error) is passed to the function. Default null (all values accepted)
 
