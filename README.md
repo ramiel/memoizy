@@ -167,7 +167,7 @@ const memFn = memoizer(fn, {
   // Specify a cache factory that returns a new WeakMap
   cache: () => new WeakMap(), 
   // A WeakMap only accept non-primitive values as key. Let's change the way the key is created
-  // In this case just return the first parameter. Note that this work for this function only
+  // In this case just return the first parameter. Note that this works for this function only
   cacheKey: obj => obj
 });
 ```
@@ -189,9 +189,9 @@ const memoizy = require('memoizy/fp');
 const memoizeFor5Seconds = memoizy({maxage: 5 * 1000});
 
 const double = a => a * 2;
-const triple = a => a * 2;
+const triple = a => a * 3;
 
-// Now we can memoize both function with the same options
+// Now we can memoize both functions with the same options
 const memoizedDouble = memoizeFor5Seconds(double);
 const memoizedTriple = memoizeFor5Seconds(triple);
 ```
