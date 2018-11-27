@@ -1,6 +1,6 @@
 {
   "name": "memoizy",
-  "version": "0.3.3",
+  "version": "1.0.0",
   "description": "Powerful memoization helper",
   "repository": "github:ramiel/memoizy",
   "main": "index.js",
