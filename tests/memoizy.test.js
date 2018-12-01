@@ -276,34 +276,19 @@ describe('memoizer', () => {
   });
 
   describe('Custom cache', () => {
-    class AlternativeCache {
-      constructor() {
-        this.data = {};
-      }
-
-      has(key) {
-        return key in this.data;
-      }
-
-      get(key) {
-        return this.data[key];
-      }
-
-      set(key, value) {
-        this.data[key] = value;
-      }
-
-      delete(key) {
-        delete this.data[key];
-      }
-
-      clear() {
-        this.data = {};
-      }
-    }
+    const AlternativeCache = () => {
+      let data = {};
+      return {
+        has(key) { return key in data; },
+        get(key) { return data[key]; },
+        set(key, value) { data[key] = value; },
+        delete(key) { delete data[key]; },
+        clear() { data = {}; },
+      };
+    };
 
     test('can use another cache', () => {
-      const aletrnativeCache = new AlternativeCache();
+      const aletrnativeCache = AlternativeCache();
       const spyGet = jest.spyOn(aletrnativeCache, 'get');
       const fn = jest.fn(a => a * 2);
       const memFn = memoizer(fn, { cache: () => aletrnativeCache });
@@ -312,6 +297,14 @@ describe('memoizer', () => {
       expect(res).toBe(6);
       expect(fn).toHaveBeenCalledTimes(1);
       expect(spyGet).toHaveBeenCalledTimes(1);
+    });
+
+    test('can delete with custom cache', () => {
+      const fn = Math.random;
+      const mem = memoizer(fn, { cache: AlternativeCache });
+      const res = mem();
+      mem.delete();
+      expect(mem()).not.toBe(res);
     });
 
     test('can use a cache wihtout clear', () => {

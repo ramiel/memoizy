@@ -13,7 +13,8 @@
   },
   "keywords": [
     "memoize",
-    "cache"
+    "cache",
+    "fp"
   ],
   "author": {
     "name": "Fabrizio Ruggeri",

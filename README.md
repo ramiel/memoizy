@@ -42,7 +42,7 @@ The memoize function accept the following options
 `memoizy(fn, options)`
 
 - `maxAge`: Tell how much time the value must be kept in memory, in milliseconds. 0 or negative values mean forever. Default: Infinity
-- `cache`: Specify a different cache to be used. It's a function that returns a new cache that must have the same interface as [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). Default [() => new Map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
+- `cache`: Specify a different cache to be used. It's a function that returns a new cache that must have the same interface as [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). Default `() => new Map()`
 - `cacheKey`: Function to build the cache key given the arguments.
 - `valueAccept`: Function in the form `(err, value) => true/false`. It receive an error (if any) and the memoized value and return true/false. If false is returned, the value is discarded. If the memoized function returns a promise, the resolved value (or the rejection error) is passed to the function. Default null (all values accepted)
 
@@ -123,51 +123,38 @@ the methods `has`, `get`, `set`, `delete` and, optionally, `clear`.
 If the cache doesn't support clear, it's up to you not to call it. In case an error is thrown.
 
 **NOTE**: If you plan to use a WeakMap, remember that clear is not available in all the implementations.    
-Look [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap#Implementing_a_WeakMap-like_class_with_a_.clear()_method=) for a way to use a weak map as cache.
+Look [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap#Implementing_a_WeakMap-like_class_with_a_.clear()_method=) for a way to use a weak map with clear implementd, as cache.
 
 ```js
 const memoizy = require('memoizy');
 
-class AlternativeCache {
-  constructor() {
-    this.data = {};
-  }
-
-  has(key) {
-    return key in this.data;
-  }
-
-  get(key) {
-    return this.data[key];
-  }
-
-  set(key, value) {
-    this.data[key] = value;
-  }
-
-  delete(key) {
-    delete this.data[key];
-  }
-
-  clear() {
-    this.data = {};
-  }
-}
+ const AlternativeCacheFactory = () => {
+  let data = {};
+  return {
+    has(key) { return key in data; },
+    get(key) { return data[key]; },
+    set(key, value) { data[key] = value; },
+    delete(key) { delete data[key]; },
+    clear() { data = {}; },
+  };
+};
 const fn = a => a * 2;
-const memFn = memoizy(fn, {cache: () => new AlternativeCache()});
+const memFn = memoizy(fn, {cache: AlternativeCacheFactory});
 ```
 
 ## Use WeakMap as cache
 
-Let's see how to use a WeakMap, without implement the optional clear.
+Let's see how to use a WeakMap, without implementing the optional clear.
 
 ```js
 const fn = jest.fn(obj => ({ ...obj, date: new Date() }));
 const memFn = memoizer(fn, {
   // Specify a cache factory that returns a new WeakMap
   cache: () => new WeakMap(), 
-  // A WeakMap only accept non-primitive values as key. Let's change the way the key is created
-  // In this case just return the first parameter. Note that this works for this function only
+  // A WeakMap only accept non-primitive values as key.
+  // Let's change the way the key is created
+  // In this case just return the first parameter. 
+  // Note that this works for this function only
   cacheKey: obj => obj
 });
 ```
