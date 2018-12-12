@@ -113,12 +113,13 @@ memSum.delete(5,4); // remove the entry for the memoized result 9
 memSum(1, 3); // returns 4 without comupting the sum
 memSum(5, 4); // returns 9 re-computing the sum and memoize it again
 
-memSum.clear(); // All values are now cleared and the cache for this memoized function is empty
+memSum.clear(); // All values are now cleared and 
+                // the cache for this memoized function is empty
 ```
 
 ### Different cache
 
-You can use another cache implementation if you desire. The only contraints is that it must implement
+You can use another cache implementation if you desire. The only contraint is that it must implement
 the methods `has`, `get`, `set`, `delete` and, optionally, `clear`.    
 If the cache doesn't support clear, it's up to you not to call it. In case an error is thrown.
 
