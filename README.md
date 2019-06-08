@@ -122,12 +122,12 @@ memSum.clear(); // All values are now cleared and
 
 ### Different cache
 
-You can use another cache implementation if you desire. The only contraint is that it must implement
+You can use another cache implementation if you desire. The only constraint is that it must implement
 the methods `has`, `get`, `set`, `delete` and, optionally, `clear`.    
 If the cache doesn't support clear, it's up to you not to call it. In case an error is thrown.
 
 **NOTE**: If you plan to use a WeakMap, remember that clear is not available in all the implementations.    
-Look [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap#Implementing_a_WeakMap-like_class_with_a_.clear()_method=) for a way to use a weak map with clear implementd, as cache.
+Look [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap#Implementing_a_WeakMap-like_class_with_a_.clear()_method) for a way to use a weak map with clear implementd, as cache.
 
 ```js
 const memoizy = require('memoizy');
@@ -158,7 +158,7 @@ const memFn = memoizer(fn, {
   // A WeakMap only accept non-primitive values as key.
   // Let's change the way the key is created
   // In this case just return the first parameter. 
-  // Note that this works for this function only
+  // Note that this works for weakMap caches only
   cacheKey: obj => obj
 });
 ```
