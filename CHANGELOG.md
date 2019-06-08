@@ -1,5 +1,9 @@
 # Memoizy
 
+## 1.0.4
+  - Update readme
+  - Fix security issue related to dev dependencies
+
 ## 1.0.3
   - Update instructions and test on custom cache
 
