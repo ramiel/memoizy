@@ -37,9 +37,12 @@ memoizedFact(3); // the return value is always 6 but
 
 ## API
 
-The memoize function accept the following options
+The memoize function is defined like that:
 
 `memoizy(fn, options)`
+
+where `fn` is the function to memoize    
+and `options` is an (optional) object with the following keys:
 
 - `maxAge`: Tell how much time the value must be kept in memory, in milliseconds. 0 or negative values mean forever. Default: Infinity
 - `cache`: Specify a different cache to be used. It's a function that returns a new cache that must have the same interface as [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). Default `() => new Map()`
