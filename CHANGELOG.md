@@ -1,5 +1,8 @@
 # Memoizy
 
+## 1.0.5
+  - Update depenencies
+
 ## 1.0.4
   - Update readme
   - Fix security issue related to dev dependencies
