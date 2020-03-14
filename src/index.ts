@@ -1,7 +1,13 @@
 export type CacheBuilder = (...args: any[]) => string;
 
 export interface Options<TReturn> {
-  cache: Function;
+  cache: () => {
+    get: (key: string) => TReturn | undefined;
+    has: (key: string) => boolean;
+    set: (key: string, value: TReturn) => any;
+    delete: (key: string) => any;
+    clear?: () => any;
+  };
   maxAge: number;
   cacheKey: CacheBuilder;
   valueAccept: ((error: unknown | null, result: TReturn) => boolean) | null;
@@ -42,7 +48,7 @@ const memoizy = <TReturn>(
   const memoized = (...args: any[]): TReturn => {
     const key = cacheKey(...args);
     if (cache.has(key)) {
-      return cache.get(key);
+      return cache.get(key) as TReturn;
     }
     const value = fn(...args);
 
@@ -64,7 +70,7 @@ const memoizy = <TReturn>(
     return value;
   };
 
-  memoized.delete = (...args: any[]): any => cache.delete(cacheKey(...args));
+  memoized.delete = (...args: any[]): any => cache.delete?.(cacheKey(...args));
   memoized.clear = (): void => {
     if (cache.clear instanceof Function) {
       cache.clear();
