@@ -1,11 +1,14 @@
-const memoizyFP = require("../fp");
-const memoizy = require("../index");
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-env jest */
+import memoizy from "..";
+import memoizyFP from "../fp";
 
 jest.mock("../index", () => jest.fn());
 
 describe("FP memoizy", () => {
   beforeEach(() => {
-    memoizy.mockClear();
+    (memoizy as jest.Mock).mockClear();
   });
 
   test("the function is curried", () => {
@@ -23,7 +26,7 @@ describe("FP memoizy", () => {
   test("all the options are passed", () => {
     const double = jest.fn(a => a * 2);
     const cacheFactory = () => new Map();
-    const cacheKeyBuilder = (...args) => JSON.stringify(args);
+    const cacheKeyBuilder = (...args: unknown[]) => JSON.stringify(args);
     const valueAcceptor = () => true;
     const m = memoizyFP({
       maxAge: 2000,

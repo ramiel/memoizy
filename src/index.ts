@@ -1,42 +1,64 @@
-export type CacheBuilder = (...args: any[]) => string;
-
-export interface Options<TReturn> {
-  cache: () => {
-    get: (key: string) => TReturn | undefined;
-    has: (key: string) => boolean;
-    set: (key: string, value: TReturn) => any;
-    delete: (key: string) => any;
-    clear?: () => any;
-  };
-  maxAge: number;
-  cacheKey: CacheBuilder;
-  valueAccept: ((error: unknown | null, result: TReturn) => boolean) | null;
-}
-
-const defaultCacheKeyBuilder: CacheBuilder = (...args) =>
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+const defaultCacheKeyBuilder = (...args: any[]): string =>
   args.length === 0 ? "__0aritykey__" : JSON.stringify(args);
-const isPromise = (value: Promise<unknown> | unknown): boolean =>
+
+const isPromise = <TResult>(value: unknown): value is Promise<TResult> =>
   value instanceof Promise;
 
-const memoizy = <TReturn>(
-  fn: (...args: any[]) => TReturn,
-  {
-    cache: cacheFactory = (): Map<string, TReturn> =>
-      new Map<string, TReturn>(),
-    maxAge = Infinity,
-    cacheKey = defaultCacheKeyBuilder,
-    valueAccept = null
-  }: Options<TReturn> = {
-    cache: (): Map<string, TReturn> => new Map<string, TReturn>(),
-    maxAge: Infinity,
-    cacheKey: defaultCacheKeyBuilder,
-    valueAccept: null
-  }
-): ((...args: any[]) => TReturn) => {
+export interface GenericCache<TKey = void, TValue = void> {
+  has: (k: TKey) => boolean;
+  get: (k: TKey) => TValue | undefined;
+  set: (k: TKey, v: TValue) => void;
+  delete: (k: TKey) => boolean;
+  clear?: () => void;
+}
+
+export interface MemoizyOptions<TResult = unknown, TCacheKey = string> {
+  cache?: () => GenericCache<TCacheKey, TResult>;
+  maxAge?: number;
+  cacheKey?: (...args: any[]) => TCacheKey;
+  valueAccept?: null | ((err: Error | null, res?: TResult) => boolean);
+}
+
+export interface MemoizedFunction<TResult> {
+  (...args: any[]): TResult;
+  delete: (...args: any[]) => boolean;
+  clear: () => void;
+}
+
+const defaultOptions = {
+  cache: () => new Map(),
+  maxAge: Infinity,
+  cacheKey: defaultCacheKeyBuilder,
+  valueAccept: null
+};
+
+/**
+ * Givent a function returns the memoized version of it
+ * @example
+ * const add = (a, b) => a + b;
+ * const memAdd = memoizy(add);
+ * const res = memAdd(4, 5);
+ *
+ * @param fn The function to be memoized
+ * @param [config] The config for the memoization process. All the config are optional
+ * @param [config.cache] A factory that returns a map like cache
+ * @param [config.maxAge] Time, in milliseconds, to retain the result of the memoization
+ * @param [config.cacheKey] A function to return the memoization key given the arguments of the function
+ * @param [config.valueAccept] A function that, given the result, returns a boolean to keep it or not.
+ */
+export const memoizy = <TResult, TCacheKey = string>(
+  fn: (...args: any[]) => TResult,
+  opt?: MemoizyOptions<TResult, TCacheKey>
+): MemoizedFunction<TResult> => {
+  const { cache: cacheFactory, cacheKey, maxAge, valueAccept } = {
+    ...defaultOptions,
+    ...opt
+  };
   const hasExpireDate = maxAge > 0 && maxAge < Infinity;
   const cache = cacheFactory();
 
-  const set = (key: string, value: TReturn): void => {
+  const set = (key: TCacheKey, value: TResult) => {
     if (hasExpireDate) {
       setTimeout(() => {
         cache.delete(key);
@@ -45,17 +67,17 @@ const memoizy = <TReturn>(
     cache.set(key, value);
   };
 
-  const memoized = (...args: any[]): TReturn => {
-    const key = cacheKey(...args);
+  const memoized = (...args: any[]) => {
+    const key = cacheKey(...args) as TCacheKey;
     if (cache.has(key)) {
-      return cache.get(key) as TReturn;
+      return cache.get(key) as TResult;
     }
     const value = fn(...args);
 
     if (!valueAccept) {
       set(key, value);
-    } else if (isPromise(value)) {
-      ((value as unknown) as Promise<unknown>)
+    } else if (isPromise<TResult>(value)) {
+      value
         .then(res => [null, res])
         .catch(err => [err])
         .then(([err, res]) => {
@@ -70,8 +92,9 @@ const memoizy = <TReturn>(
     return value;
   };
 
-  memoized.delete = (...args: any[]): any => cache.delete?.(cacheKey(...args));
-  memoized.clear = (): void => {
+  memoized.delete = (...args: any[]) =>
+    cache.delete(cacheKey(...args) as TCacheKey);
+  memoized.clear = () => {
     if (cache.clear instanceof Function) {
       cache.clear();
     } else {
