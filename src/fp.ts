@@ -1,24 +1,26 @@
-import memoizy, { MemoizyOptions, MemoizedFunction } from ".";
+import { memoizy, MemoizyOptions, MemoizedFunction } from './memoizy';
 
 const curry: any = (fn: Function, ...args: unknown[]) =>
-  args.length >= fn.length ? fn(...args) : curry.bind(null, fn, ...args);
+  args.length >= fn.length
+    ? fn(...args)
+    : curry.bind(null, fn, ...args);
 
 const curried = curry(
   <TResult>(
     options: MemoizyOptions<TResult>,
-    fn: (...args: unknown[]) => TResult
-  ) => memoizy(fn, options)
+    fn: (...args: unknown[]) => TResult,
+  ) => memoizy(fn, options),
 );
 
-function fpmemoizy<TResult>(
+export function fp<TResult>(
   options: MemoizyOptions<TResult>,
-  fn: (...args: unknown[]) => TResult
+  fn: (...args: any[]) => TResult,
 ): MemoizedFunction<TResult>;
-function fpmemoizy(
-  options: MemoizyOptions
-): <TResult>(fn: (...args: unknown[]) => TResult) => MemoizedFunction<TResult>;
-function fpmemoizy(...args: unknown[]) {
+export function fp(
+  options: MemoizyOptions,
+): <TResult>(
+  fn: (...args: any[]) => TResult,
+) => MemoizedFunction<TResult>;
+export function fp(...args: any[]) {
   return curried(...args);
 }
-
-export default fpmemoizy;

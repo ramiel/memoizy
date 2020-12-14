@@ -84,3 +84,5 @@ typings/
 .stress.js
 .vscode/
 dist/
+/fp.js
+/fp.d.ts
