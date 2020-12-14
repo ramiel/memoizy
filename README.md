@@ -36,6 +36,12 @@ memoizedFact(3); // the return value is always 6 but
                  // the factorial is not computed anymore
 ```
 
+If you're using ES6 or typescript, you can import it with
+
+```ts
+import { memoizy } from 'memoizy';
+```
+
 ## API
 
 The memoize function is defined like that:
@@ -175,7 +181,7 @@ It has the same features and the following differences:
 An example
 
 ```js
-const memoizy = require('memoizy/fp');
+const memoizy = require('memoizy').fp;
 
 // since it is curried, we can pass just options and a new function will be returned
 const memoizeFor5Seconds = memoizy({maxage: 5 * 1000});
@@ -186,4 +192,10 @@ const triple = a => a * 3;
 // Now we can memoize both functions with the same options
 const memoizedDouble = memoizeFor5Seconds(double);
 const memoizedTriple = memoizeFor5Seconds(triple);
+```
+
+If you're using ES6 or typescript, you can import with
+
+```ts
+import { fp as memoizy } from 'memoizy';
 ```
