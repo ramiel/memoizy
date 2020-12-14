@@ -3,10 +3,14 @@
   "version": "1.0.6",
   "description": "Powerful memoization helper",
   "repository": "github:ramiel/memoizy",
-  "main": "index.js",
-  "typings": "index.d.ts",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "eslint .",
+    "build": "NODE_ENV=production rollup -c",
+    "build-watch": "rollup -c -w",
+    "dev": "NODE_ENV=development concurrently --kill-others \"npm run build-watch\"",
+    "lint": "eslint . --ext ts,tsx",
     "test": "npm run lint && npm run test-only -- --coverage",
     "test-only": "NODE_ENV=test jest",
     "test-watch": "npm run test-only -- --watch",
@@ -24,26 +28,43 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^26.0.4",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
     "coveralls": "^3.0.2",
-    "eslint": "^5.9.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-jest": "^22.0.0",
-    "jest": "^26.1.0"
+    "eslint-plugin-prettier": "^3.1.2",
+    "jest": "^26.1.0",
+    "prettier": "^1.19.1",
+    "rollup": "^1.31.1",
+    "rollup-plugin-typescript2": "^0.26.0",
+    "ts-jest": "^26.1.2",
+    "typescript": "^3.9.6"
   },
   "dependencies": {},
   "jest": {
     "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "\\.(ts|tsx)$": "ts-jest"
+    },
+    "testRegex": "/src/tests/.*\\.(ts|tsx|js)$",
     "coverageReporters": [
       "lcov",
       "text-summary",
       "html"
     ],
     "collectCoverageFrom": [
-      "**/*.{js,jsx}",
+      "**/*.{ts,tsx}",
       "!**/node_modules/**",
       "!**/coverage/**",
-      "!.*.js"
+      "!.*.ts"
     ]
   }
 }

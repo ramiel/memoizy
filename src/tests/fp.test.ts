@@ -1,11 +1,14 @@
-const memoizyFP = require('../fp');
-const memoizy = require('../index');
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-env jest */
+import { memoizy } from '../memoizy';
+import { fp as memoizyFP } from '../fp';
 
-jest.mock('../index', () => jest.fn());
+jest.mock('../memoizy', () => ({ memoizy: jest.fn() }));
 
 describe('FP memoizy', () => {
   beforeEach(() => {
-    memoizy.mockClear();
+    (memoizy as jest.Mock).mockClear();
   });
 
   test('the function is curried', () => {
@@ -23,7 +26,8 @@ describe('FP memoizy', () => {
   test('all the options are passed', () => {
     const double = jest.fn(a => a * 2);
     const cacheFactory = () => new Map();
-    const cacheKeyBuilder = (...args) => JSON.stringify(args);
+    const cacheKeyBuilder = (...args: unknown[]) =>
+      JSON.stringify(args);
     const valueAcceptor = () => true;
     const m = memoizyFP({
       maxAge: 2000,
@@ -33,14 +37,11 @@ describe('FP memoizy', () => {
     });
     m(double);
     expect(memoizy).toHaveBeenCalledTimes(1);
-    expect(memoizy).toHaveBeenCalledWith(
-      double,
-      {
-        maxAge: 2000,
-        cache: cacheFactory,
-        cacheKey: cacheKeyBuilder,
-        valueAccept: valueAcceptor,
-      },
-    );
+    expect(memoizy).toHaveBeenCalledWith(double, {
+      maxAge: 2000,
+      cache: cacheFactory,
+      cacheKey: cacheKeyBuilder,
+      valueAccept: valueAcceptor,
+    });
   });
 });
