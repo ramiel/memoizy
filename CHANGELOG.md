@@ -1,5 +1,8 @@
 # Memoizy
 
+## 1.1.1
+  - Improved types
+
 ## 1.1.0
   - Better typescript support
 
