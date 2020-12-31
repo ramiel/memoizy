@@ -46,7 +46,7 @@ describe('memoizer', () => {
     });
 
     test('a function with an undefined arg, 1-arity, is memoized', () => {
-      const fn = jest.fn(a => `hello ${a}`);
+      const fn = jest.fn((a?: string) => `hello ${a}`);
       const mem = memoizer(fn);
       mem();
       mem();
@@ -56,8 +56,8 @@ describe('memoizer', () => {
     });
 
     test('two functions with an undefined arg, 1-arity, are memoized indipendently', () => {
-      const fn = jest.fn(a => `hello ${a}`);
-      const fn2 = jest.fn(a => `ciao ${a}`);
+      const fn = jest.fn((a?: string) => `hello ${a}`);
+      const fn2 = jest.fn((a?: string) => `ciao ${a}`);
       const mem = memoizer(fn);
       const mem2 = memoizer(fn2);
       mem();
@@ -335,7 +335,7 @@ describe('memoizer', () => {
 
     test('can use a cache wihtout clear', () => {
       const fn = jest.fn(obj => ({ ...obj, date: new Date() }));
-      const memFn = memoizer<unknown, object>(fn, {
+      const memFn = memoizer(fn, {
         cache: (): GenericCache<object, unknown> => new WeakMap(),
         cacheKey: o => o,
       });
