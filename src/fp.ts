@@ -6,21 +6,21 @@ const curry: any = (fn: Function, ...args: unknown[]) =>
     : curry.bind(null, fn, ...args);
 
 const curried = curry(
-  <TResult>(
-    options: MemoizyOptions<TResult>,
+  <TResult, TArgs extends any[]>(
+    options: MemoizyOptions<TArgs, TResult>,
     fn: (...args: unknown[]) => TResult,
   ) => memoizy(fn, options),
 );
 
-export function fp<TResult>(
-  options: MemoizyOptions<TResult>,
-  fn: (...args: any[]) => TResult,
-): MemoizedFunction<TResult>;
-export function fp(
-  options: MemoizyOptions,
+export function fp<TResult, TArgs extends any[]>(
+  options: MemoizyOptions<TArgs, TResult>,
+  fn: (...args: TArgs) => TResult,
+): MemoizedFunction<TResult, TArgs>;
+export function fp<TArgs extends any[]>(
+  options: MemoizyOptions<TArgs>,
 ): <TResult>(
-  fn: (...args: any[]) => TResult,
-) => MemoizedFunction<TResult>;
-export function fp(...args: any[]) {
+  fn: (...args: TArgs) => TResult,
+) => MemoizedFunction<TResult, TArgs>;
+export function fp<TArgs extends any[]>(...args: TArgs) {
   return curried(...args);
 }
