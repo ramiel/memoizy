@@ -70,6 +70,7 @@ export interface MemoizedFunction<TResult, TArgs extends any[]> {
  * @param [config.maxAge] Time, in milliseconds, to retain the result of the memoization
  * @param [config.cacheKey] A function to return the memoization key given the arguments of the function
  * @param [config.valueAccept] A function that, given the result, returns a boolean to keep it or not.
+ * @param [config.cacheHandlesExpiration] If true, expiration mechanism is left to the cache itself
  */
 export const memoizy = <
   TResult,
