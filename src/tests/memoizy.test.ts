@@ -2,7 +2,11 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-env jest */
 
-import { GenericCache, memoizy as memoizer } from '../memoizy';
+import {
+  CacheWithTimer,
+  GenericCache,
+  memoizy as memoizer,
+} from '../memoizy';
 
 jest.useFakeTimers();
 
@@ -351,6 +355,114 @@ describe('memoizer', () => {
       expect(res1).toBe(res2);
       expect(fn).toHaveBeenCalledTimes(1);
       expect(() => memFn.clear()).toThrow();
+    });
+  });
+
+  describe('Cache with expiration mechanism', () => {
+    const AutoDeleteCache = () => {
+      let data: { [key: string]: unknown } = {};
+      const cache: CacheWithTimer<string, unknown> = {
+        has(key) {
+          return key in data;
+        },
+        get(key) {
+          return data[key];
+        },
+        set(key, value, expiration) {
+          if (expiration) {
+            setTimeout(() => {
+              cache.delete(key);
+            }, expiration);
+          }
+          data[key] = value;
+        },
+        delete(key) {
+          delete data[key];
+          return true;
+        },
+        clear() {
+          data = {};
+        },
+      };
+      return cache;
+    };
+
+    beforeEach(() => {
+      jest.clearAllTimers();
+    });
+
+    test('by default no value is discarded', () => {
+      const fn = () => Math.random();
+      const mem = memoizer(fn, {
+        cache: AutoDeleteCache,
+        cacheHandlesExpiration: true,
+      });
+      const res = mem();
+      jest.advanceTimersByTime(1000 * 1000);
+      expect(mem()).toBe(res);
+    });
+
+    test('when max-age is set, the value is not discarded before the time', () => {
+      const fn = () => Math.random();
+      const mem = memoizer(fn, {
+        maxAge: 1000,
+        cache: AutoDeleteCache,
+        cacheHandlesExpiration: true,
+      });
+      const res = mem();
+      jest.advanceTimersByTime(990);
+      expect(mem()).toBe(res);
+    });
+
+    test('when max-age is set, the value is NOT discarded before the time (shifted first set)', () => {
+      const fn = () => Math.random();
+      const mem = memoizer(fn, {
+        maxAge: 1000,
+        cache: AutoDeleteCache,
+        cacheHandlesExpiration: true,
+      });
+      jest.advanceTimersByTime(200);
+      const res = mem();
+      jest.advanceTimersByTime(900);
+      expect(mem()).toBe(res);
+      jest.advanceTimersByTime(101);
+      expect(mem()).not.toBe(res);
+    });
+
+    test('when max-age is set, the value is discarded after the time', () => {
+      const fn = () => Math.random();
+      const mem = memoizer(fn, {
+        maxAge: 1000,
+        cache: AutoDeleteCache,
+        cacheHandlesExpiration: true,
+      });
+      const res = mem();
+      jest.advanceTimersByTime(1001);
+      expect(mem()).not.toBe(res);
+    });
+
+    test('when max-age is 0, the value is memoized forever', () => {
+      const fn = () => Math.random();
+      const mem = memoizer(fn, {
+        maxAge: 0,
+        cache: AutoDeleteCache,
+        cacheHandlesExpiration: true,
+      });
+      const res = mem();
+      jest.advanceTimersByTime(10000);
+      expect(mem()).toBe(res);
+    });
+
+    test('when max-age is less than 0, the value is memoized forever', () => {
+      const fn = () => Math.random();
+      const mem = memoizer(fn, {
+        maxAge: -10,
+        cache: AutoDeleteCache,
+        cacheHandlesExpiration: true,
+      });
+      const res = mem();
+      jest.advanceTimersByTime(10000);
+      expect(mem()).toBe(res);
     });
   });
 });
