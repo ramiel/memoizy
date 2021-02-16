@@ -1,5 +1,8 @@
 # Memoizy
 
+## 1.2.0
+  - Let the cache handle the expiration if possible. This allow to use external cache such as Redis
+
 ## 1.1.1
   - Improved types
 
