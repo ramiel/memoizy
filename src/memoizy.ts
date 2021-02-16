@@ -14,6 +14,11 @@ export interface GenericCache<TKey = void, TValue = void> {
   clear?: () => void;
 }
 
+export interface CacheWithTimer<TKey = void, TValue = void>
+  extends Omit<GenericCache<TKey, TValue>, 'set'> {
+  set: (k: TKey, v: TValue, exp: number) => void;
+}
+
 export interface MemoizyOptions<
   TArgs extends any[] = unknown[],
   TResult = unknown,
@@ -22,7 +27,9 @@ export interface MemoizyOptions<
   /**
    * A factory that returns a map like cache
    */
-  cache?: () => GenericCache<TCacheKey, TResult>;
+  cache?: () =>
+    | GenericCache<TCacheKey, TResult>
+    | CacheWithTimer<TCacheKey, TResult>;
   /**
    * Time, in milliseconds, to retain the result of the memoization
    */
@@ -37,6 +44,11 @@ export interface MemoizyOptions<
   valueAccept?:
     | null
     | ((err: Error | null, res?: TResult) => boolean);
+  /**
+   * If true the expiration is handled at cache level. In that case `set` takes three parameters and
+   * the last is the expiration time in milliseconds. Useful for redis caches
+   */
+  cacheHandlesExpiration?: boolean;
 }
 
 export interface MemoizedFunction<TResult, TArgs extends any[]> {
@@ -44,13 +56,6 @@ export interface MemoizedFunction<TResult, TArgs extends any[]> {
   delete: (...args: TArgs) => boolean;
   clear: () => void;
 }
-
-const defaultOptions = {
-  cache: () => new Map(),
-  maxAge: Infinity,
-  cacheKey: defaultCacheKeyBuilder,
-  valueAccept: null,
-};
 
 /**
  * Givent a function returns the memoized version of it
@@ -74,20 +79,27 @@ export const memoizy = <
   fn: (...args: TArgs) => TResult,
   opt?: MemoizyOptions<TArgs, TResult, TCacheKey>,
 ): MemoizedFunction<TResult, TArgs> => {
-  const { cache: cacheFactory, cacheKey, maxAge, valueAccept } = {
-    ...defaultOptions,
-    ...opt,
-  };
+  const {
+    cache: cacheFactory = () => new Map<TCacheKey, TResult>(),
+    cacheKey = defaultCacheKeyBuilder,
+    maxAge = Infinity,
+    valueAccept = null,
+    cacheHandlesExpiration = false,
+  } = opt || {};
   const hasExpireDate = maxAge > 0 && maxAge < Infinity;
   const cache = cacheFactory();
 
   const set = (key: TCacheKey, value: TResult) => {
-    if (hasExpireDate) {
-      setTimeout(() => {
-        cache.delete(key);
-      }, maxAge);
+    if (cacheHandlesExpiration && hasExpireDate) {
+      cache.set(key, value, maxAge);
+    } else {
+      if (hasExpireDate) {
+        setTimeout(() => {
+          cache.delete(key);
+        }, maxAge);
+      }
+      (cache as GenericCache<TCacheKey, TResult>).set(key, value);
     }
-    cache.set(key, value);
   };
 
   const memoized = (...args: TArgs) => {
