@@ -7,7 +7,7 @@ const isPromise = <TResult>(
 ): value is Promise<TResult> => value instanceof Promise;
 
 export interface GenericCache<TKey = void, TValue = void> {
-  has: (k: TKey) => boolean;
+  has: (k: TKey) => boolean | Promise<boolean>;
   get: (k: TKey) => TValue | undefined;
   set: (k: TKey, v: TValue) => void;
   delete: (k: TKey) => boolean;
@@ -52,7 +52,7 @@ export interface MemoizyOptions<
 }
 
 export interface MemoizedFunction<TResult, TArgs extends any[]> {
-  (...args: TArgs): TResult;
+  (...args: TArgs): TResult | Promise<TResult>;
   delete: (...args: TArgs) => boolean;
   clear: () => void;
 }
@@ -77,7 +77,7 @@ export const memoizy = <
   TArgs extends any[],
   TCacheKey = string
 >(
-  fn: (...args: TArgs) => TResult,
+  fn: (...args: TArgs) => TResult | Promise<TResult>,
   opt?: MemoizyOptions<TArgs, TResult, TCacheKey>,
 ): MemoizedFunction<TResult, TArgs> => {
   const {
@@ -103,22 +103,25 @@ export const memoizy = <
     }
   };
 
-  const memoized = (...args: TArgs) => {
-    const key = cacheKey(...args) as TCacheKey;
-    if (cache.has(key)) {
+  const onExistenceChecked = (
+    exists: boolean,
+    key: TCacheKey,
+    args: TArgs,
+  ) => {
+    if (exists) {
       return cache.get(key) as TResult;
     }
     const value = fn(...args);
 
     if (!valueAccept) {
-      set(key, value);
+      set(key, value as TResult);
     } else if (isPromise<TResult>(value)) {
       value
         .then(res => [null, res])
         .catch(err => [err])
         .then(([err, res]) => {
           if (valueAccept(err, res)) {
-            set(key, value);
+            set(key, res);
           }
         });
     } else if (valueAccept(null, value)) {
@@ -126,6 +129,18 @@ export const memoizy = <
     }
 
     return value;
+  };
+
+  const memoized = (...args: TArgs) => {
+    const key = cacheKey(...args) as TCacheKey;
+    const existence = cache.has(key);
+    if (isPromise(existence)) {
+      return existence.then(exists =>
+        onExistenceChecked(exists, key, args),
+      );
+    } else {
+      return onExistenceChecked(existence, key, args);
+    }
   };
 
   memoized.delete = (...args: TArgs) =>
