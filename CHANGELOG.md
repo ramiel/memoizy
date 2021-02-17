@@ -1,5 +1,8 @@
 # Memoizy
 
+## 1.2.2
+  - Caches can now have an async `has` method
+
 ## 1.2.1
   - Export missing types
 
