@@ -1,5 +1,8 @@
 # Memoizy
 
+## 1.2.3
+  - Do not save Promise instead of value
+
 ## 1.2.2
   - Caches can now have an async `has` method
 

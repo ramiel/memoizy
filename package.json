@@ -1,6 +1,6 @@
 {
   "name": "memoizy",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Powerful memoization helper",
   "repository": "github:ramiel/memoizy",
   "main": "dist/index.cjs.js",
